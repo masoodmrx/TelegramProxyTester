@@ -1,0 +1,60 @@
+name: Prepare Gradle Offline Cache
+
+on:
+  workflow_dispatch:
+
+jobs:
+  prepare:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      # This generates .flutter-plugins-dependencies so Gradle discovers
+      # every Android plugin used by the application.
+      - name: Download Flutter packages
+        run: flutter pub get
+
+      - name: Download Gradle dependencies
+        shell: powershell
+        run: |
+          $env:JAVA_HOME = $env:JAVA_HOME_21_X64
+          Set-Location android
+          .\gradlew.bat assembleDebug --refresh-dependencies
+
+      - name: Package Gradle cache
+        shell: powershell
+        run: |
+          $bundle = "$env:RUNNER_TEMP\gradle-offline"
+          New-Item -ItemType Directory -Force -Path $bundle | Out-Null
+
+          Copy-Item "$env:USERPROFILE\.gradle\caches" `
+            "$bundle\caches" -Recurse -Force
+
+          Copy-Item "$env:USERPROFILE\.gradle\wrapper" `
+            "$bundle\wrapper" -Recurse -Force
+
+          Compress-Archive `
+            -Path "$bundle\*" `
+            -DestinationPath "gradle-offline-cache.zip" `
+            -Force
+
+      - name: Upload Gradle cache
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-offline-cache
+          path: gradle-offline-cache.zip
+          retention-days: 7
