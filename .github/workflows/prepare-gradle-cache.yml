@@ -36,17 +36,26 @@ jobs:
           Set-Location android
           .\gradlew.bat assembleDebug --refresh-dependencies
 
+      - name: Stop Gradle daemons
+        shell: powershell
+        run: |
+          $env:JAVA_HOME = $env:JAVA_HOME_21_X64
+          Set-Location android
+          .\gradlew.bat --stop
+
       - name: Package Gradle cache
         shell: powershell
         run: |
           $bundle = "$env:RUNNER_TEMP\gradle-offline"
           New-Item -ItemType Directory -Force -Path $bundle | Out-Null
 
-          Copy-Item "$env:USERPROFILE\.gradle\caches" `
-            "$bundle\caches" -Recurse -Force
+          robocopy "$env:USERPROFILE\.gradle\caches" "$bundle\caches" `
+            /E /XF *.lock *.lck
+          if ($LASTEXITCODE -gt 7) { exit $LASTEXITCODE }
 
-          Copy-Item "$env:USERPROFILE\.gradle\wrapper" `
-            "$bundle\wrapper" -Recurse -Force
+          robocopy "$env:USERPROFILE\.gradle\wrapper" "$bundle\wrapper" `
+            /E /XF *.lock *.lck
+          if ($LASTEXITCODE -gt 7) { exit $LASTEXITCODE }
 
           Compress-Archive `
             -Path "$bundle\*" `
