@@ -57,10 +57,13 @@ jobs:
             /E /XF *.lock *.lck
           if ($LASTEXITCODE -gt 7) { exit $LASTEXITCODE }
 
-          Compress-Archive `
-            -Path "$bundle\*" `
-            -DestinationPath "gradle-offline-cache.zip" `
-            -Force
+          # PowerShell Compress-Archive is too slow for the large Gradle
+          # distribution and may be terminated before the artifact is made.
+          tar.exe -a -c -f "gradle-offline-cache.zip" -C "$bundle" .
+
+          if (-not (Test-Path "gradle-offline-cache.zip")) {
+            throw "Gradle cache archive was not created."
+          }
 
       - name: Upload Gradle cache
         uses: actions/upload-artifact@v4
