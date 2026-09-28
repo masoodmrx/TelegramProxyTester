@@ -329,11 +329,12 @@ packages:
     source: hosted
     version: "1.1.0"
   jni:
-    dependency: "direct overridden"
+    dependency: transitive
     description:
-      path: "third_party/jni"
-      relative: true
-    source: path
+      name: jni
+      sha256: f038e58b4dc2c9037f50e233175086337e0b305e356d28211bf55f21c504cbd3
+      url: "https://pub.flutter-io.cn"
+    source: hosted
     version: "1.0.3"
   jni_flutter:
     dependency: transitive
@@ -567,9 +568,10 @@ packages:
   sqlite3_flutter_libs:
     dependency: "direct main"
     description:
-      path: "third_party/sqlite3_flutter_libs"
-      relative: true
-    source: path
+      name: sqlite3_flutter_libs
+      sha256: eeb9e3a45207649076b808f8a5a74d68770d0b7f26ccef6d5f43106eee5375ad
+      url: "https://pub.flutter-io.cn"
+    source: hosted
     version: "0.5.42"
   sqlparser:
     dependency: transitive
@@ -652,11 +654,12 @@ packages:
     source: hosted
     version: "6.3.2"
   url_launcher_android:
-    dependency: "direct overridden"
+    dependency: transitive
     description:
-      path: "third_party/url_launcher_android"
-      relative: true
-    source: path
+      name: url_launcher_android
+      sha256: "3bb000251e55d4a209aa0e2e563309dc9bb2befea2295fd0cec1f51760aac572"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
     version: "6.3.29"
   url_launcher_ios:
     dependency: transitive
