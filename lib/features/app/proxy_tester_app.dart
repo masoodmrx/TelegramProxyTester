@@ -28,9 +28,10 @@ class _ProxyTesterAppState extends State<ProxyTesterApp> {
     super.initState();
     _sourceSyncService = SourceSyncService(widget.database);
     final settings = widget.database.settingsCache;
-    _locale = settings['language'] == null || settings['language'] == 'system'
+    final language = settings['language'];
+    _locale = language == null || language == 'system' || language == 'unset'
         ? null
-        : Locale(settings['language']!);
+        : Locale(language);
     _themeMode = switch (settings['theme']) {
       'light' => ThemeMode.light,
       'dark' => ThemeMode.dark,
