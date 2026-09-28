@@ -1,5 +1,13 @@
 class ProxyRecord {
-  const ProxyRecord({required this.id, required this.server, required this.port, required this.originalLink, this.lastStatus, this.lastLatencyMs, this.isFavorite = false});
+  const ProxyRecord({
+    required this.id,
+    required this.server,
+    required this.port,
+    required this.originalLink,
+    this.lastStatus,
+    this.lastLatencyMs,
+    this.isFavorite = false,
+  });
   final int id;
   final String server;
   final int port;
@@ -10,7 +18,11 @@ class ProxyRecord {
 }
 
 class SourceFileRecord {
-  const SourceFileRecord({required this.url, required this.sourceType, this.validationStatus});
+  const SourceFileRecord({
+    required this.url,
+    required this.sourceType,
+    this.validationStatus,
+  });
   final String url;
   final String sourceType;
   final String? validationStatus;
@@ -22,8 +34,25 @@ class ProxyPage {
   final int total;
 }
 
+class DashboardStats {
+  const DashboardStats({
+    required this.proxies,
+    required this.healthy,
+    required this.sources,
+    required this.checks,
+  });
+  final int proxies;
+  final int healthy;
+  final int sources;
+  final int checks;
+}
+
 class ProxyCheckTarget {
-  const ProxyCheckTarget({required this.id, required this.server, required this.port});
+  const ProxyCheckTarget({
+    required this.id,
+    required this.server,
+    required this.port,
+  });
   final int id;
   final String server;
   final int port;

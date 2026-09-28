@@ -1,0 +1,5 @@
+# One GitHub repository URL per line.
+# This file is fetched by the app when the user presses "Update default sources".
+https://github.com/SoliSpirit/mtproto
+https://github.com/V2RAYCONFIGSPOOL/TELEGRAM_PROXY_SUB
+https://github.com/zakky8/mtproto-proxy-pro
