@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "telegram_proxy_tester" "\0"
+            VALUE "FileDescription", "Telegram Proxy Tester" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "telegram_proxy_tester" "\0"
+            VALUE "InternalName", "Telegram Proxy Tester" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2026 com.example. All rights reserved." "\0"
             VALUE "OriginalFilename", "telegram_proxy_tester.exe" "\0"
-            VALUE "ProductName", "telegram_proxy_tester" "\0"
+            VALUE "ProductName", "Telegram Proxy Tester" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
