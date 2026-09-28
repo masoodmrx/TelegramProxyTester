@@ -59,9 +59,12 @@ jobs:
 
           # PowerShell Compress-Archive is too slow for the large Gradle
           # distribution and may be terminated before the artifact is made.
-          tar.exe -a -c -f "gradle-offline-cache.zip" -C "$bundle" .
+          # Use an absolute output path so tar does not create the archive
+          # inside $bundle and include the archive in itself.
+          $archive = Join-Path (Get-Location) "gradle-offline-cache.zip"
+          tar.exe -a -c -f "$archive" -C "$bundle" .
 
-          if (-not (Test-Path "gradle-offline-cache.zip")) {
+          if (-not (Test-Path $archive)) {
             throw "Gradle cache archive was not created."
           }
 
