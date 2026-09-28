@@ -1,0 +1,91 @@
+name: Build Release Packages
+
+on:
+  workflow_dispatch:
+
+jobs:
+  android:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.35.6"
+          channel: stable
+          cache: true
+
+      - name: Configure Android signing
+        shell: powershell
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          $required = @{
+            ANDROID_KEYSTORE_BASE64 = $env:ANDROID_KEYSTORE_BASE64
+            ANDROID_KEYSTORE_PASSWORD = $env:ANDROID_KEYSTORE_PASSWORD
+            ANDROID_KEY_ALIAS = $env:ANDROID_KEY_ALIAS
+            ANDROID_KEY_PASSWORD = $env:ANDROID_KEY_PASSWORD
+          }
+          foreach ($item in $required.GetEnumerator()) {
+            if ([string]::IsNullOrWhiteSpace($item.Value)) { throw "Missing GitHub secret: $($item.Key)" }
+          }
+          [IO.File]::WriteAllBytes("android\upload-keystore.jks", [Convert]::FromBase64String($env:ANDROID_KEYSTORE_BASE64))
+          @"
+          storePassword=$env:ANDROID_KEYSTORE_PASSWORD
+          keyPassword=$env:ANDROID_KEY_PASSWORD
+          keyAlias=$env:ANDROID_KEY_ALIAS
+          storeFile=upload-keystore.jks
+          "@ | Set-Content android\key.properties
+
+      - name: Build Android APK
+        run: |
+          flutter pub get
+          flutter build apk --release
+
+      - name: Upload Android APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: telegram-proxy-tester-android
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 14
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.35.6"
+          channel: stable
+          cache: true
+
+      - name: Build Windows
+        run: |
+          flutter pub get
+          flutter build windows --release
+
+      - name: Package Windows
+        shell: powershell
+        run: |
+          Compress-Archive -Path "build\windows\x64\runner\Release\*" -DestinationPath "telegram-proxy-tester-windows.zip" -Force
+
+      - name: Upload Windows package
+        uses: actions/upload-artifact@v4
+        with:
+          name: telegram-proxy-tester-windows
+          path: telegram-proxy-tester-windows.zip
+          retention-days: 14
